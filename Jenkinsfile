@@ -27,7 +27,7 @@ pipeline {
                                         sourceFiles: 'index.html',
                                         removePrefix: '',
                                         remoteDirectory: '/tmp',
-                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
+                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/'
                                     )
                                 ]
                             )
@@ -59,7 +59,7 @@ pipeline {
                                         sourceFiles: 'index.html',
                                         removePrefix: '',
                                         remoteDirectory: '/tmp',
-                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
+                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/'
                                     )
                                 ]
                             )
