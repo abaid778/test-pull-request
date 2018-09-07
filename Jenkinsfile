@@ -3,70 +3,70 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Running build automation'
-                echo "This is BUILD step"
+                echo 'PIPELINES coming'
             }
         }
-  stage('DeploytoStaging') {
-   when {
-    branch 'master'
-   }
-    steps {
-             withCredentials([usernamePassword(credentialsId: 'ssh_pass', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                sshPublisher(
-                 failOnError:true,
-                 continueOnError:False,
-                 publishers :[
-                  sshCredentials: [
-                  configName: 'staging',
-                  username: "$USERNAME",
-                  encryptedPassPhrase: "$USERPASS",
-                  ],
-                  transfers: [
-                   sshTransfer(
-                    sourceFiles: 'index.html',
-                    remoteDirectory: '/tmp',
-                    execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
-                   )
-                  ]
-                   ]
-                )
-              }
+        stage('DeployToStaging') {
+            when {
+                branch 'master'
             }
-  
-       }
-
-        stage('DeploytoProduction') {
-   when {
-    branch 'master'
-   }
             steps {
-
-             input 'Does the staging environment looks OK?'
-             milestore(1)
-
-             withCredentials([usernamePassword(credentialsId: 'ssh_pass', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                sshPublisher(
-                failOnError:true,
-                continueOnError:False,
-                publishers :[
-                 sshCredentials: [
-                  configName: 'production',
-                  username: "$USERNAME",
-                  encryptedPassPhrase: "$USERPASS",
-                 ],
-                 transfers: [
-                  sshTransfer(
-                   sourceFiles: 'index.html',
-                   remoteDirectory: '/tmp',
-                   execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
-                  )
-                 ]
-                  ]
-                )
-              }
-            }	
-       }
-
-}
+                withCredentials([usernamePassword(credentialsId: 'ssh_pass', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'staging',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'index.html',
+                                        removePrefix: '',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+        stage('DeployToProduction') {
+            when {
+                branch 'master'
+            }
+            steps {
+                input 'Does the staging environment look OK?'
+                milestone(1)
+                withCredentials([usernamePassword(credentialsId: 'ssh_pass', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
+                    sshPublisher(
+                        failOnError: true,
+                        continueOnError: false,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'production',
+                                sshCredentials: [
+                                    username: "$USERNAME",
+                                    encryptedPassphrase: "$USERPASS"
+                                ], 
+                                transfers: [
+                                    sshTransfer(
+                                        sourceFiles: 'index.html',
+                                        removePrefix: '',
+                                        remoteDirectory: '/tmp',
+                                        execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
+            }
+        }
+    }
 }
