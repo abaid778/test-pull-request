@@ -1,5 +1,5 @@
-
-​pipeline {    agent any
+pipeline {
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -14,22 +14,22 @@
     steps {
              withCredentials([usernamePassword(credentialsId: 'ssh_pass', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                 sshPublisher(
-                failOnError:true,
-                continueOnError:False,
-                Publishers :[
-                 configName: 'staging',
-                 sshCredentials: [
+                 failOnError:true,
+                 continueOnError:False,
+                 Publishers :[
+                  sshCredentials: [
+                  configName: 'staging',
                   username: "$USERNAME",
                   encryptedPassPhrase: "$USERPASS",
-                 ],
-                 transfers: [
-                  sshTransfer(
-                   sourceFiles: 'index.html',
-                   remoteDirectory: '/tmp',
-                   execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
-                  )
-                 ]
+                  ],
+                  transfers: [
+                   sshTransfer(
+                    sourceFiles: 'index.html',
+                    remoteDirectory: '/tmp',
+                    execCommand: 'sudo cp /tmp/index.html /var/www/html/ && /etc/init.d/apache2 reload'
+                   )
                   ]
+                   ]
                 )
               }
             }
@@ -50,8 +50,8 @@
                 failOnError:true,
                 continueOnError:False,
                 Publishers :[
-                 configName: 'production',
                  sshCredentials: [
+                  configName: 'production',
                   username: "$USERNAME",
                   encryptedPassPhrase: "$USERPASS",
                  ],
