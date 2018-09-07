@@ -16,7 +16,7 @@ pipeline {
                 sshPublisher(
                  failOnError:true,
                  continueOnError:False,
-                 Publishers :[
+                 publishers :[
                   sshCredentials: [
                   configName: 'staging',
                   username: "$USERNAME",
@@ -49,7 +49,7 @@ pipeline {
                 sshPublisher(
                 failOnError:true,
                 continueOnError:False,
-                Publishers :[
+                publishers :[
                  sshCredentials: [
                   configName: 'production',
                   username: "$USERNAME",
@@ -70,4 +70,3 @@ pipeline {
 
 }
 }
-​
